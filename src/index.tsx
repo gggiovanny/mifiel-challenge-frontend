@@ -1,15 +1,29 @@
+import './styles/global.css';
+
+import { MantineProvider } from '@mantine/core';
+import ErrorPage from 'components/ErrorPage';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Index, { loader as IndexLoader } from 'routes';
+import { theme } from 'styles/theme';
+
 import reportWebVitals from './reportWebVitals';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
-root.render(
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Index />,
+    errorElement: <ErrorPage />,
+    loader: IndexLoader,
+  },
+]);
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
-    <App />
+    <MantineProvider theme={theme}>
+      <RouterProvider router={router} />
+    </MantineProvider>
   </React.StrictMode>
 );
 
