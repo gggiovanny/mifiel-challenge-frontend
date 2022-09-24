@@ -1,4 +1,4 @@
-import { DocumentResponse } from '@mifiel/models';
+import { Signers } from 'types/documents';
 
-export default (signers?: DocumentResponse['signers']) =>
+export default (signers?: Signers) =>
   signers?.reduce((acc, signer) => (acc ? `${acc}, ${signer.name}` : `${signer.name}`), '');
