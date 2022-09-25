@@ -1,19 +1,25 @@
-import { Center, Container, Table, Title } from '@mantine/core';
+import { Button, Center, Container, Table, Title } from '@mantine/core';
 import SignButton from 'components/SignButton';
 import SignDocumentModal, { WidgetData } from 'components/SignDocumentModal';
-import apiRequest from 'providers/apiRequest';
+import { loremLongText } from 'constants/defaults';
+import { createDocumentFormData, getDocuments } from 'providers/api/documents';
 import { useState } from 'react';
-import { MdCancel, MdCheckCircle } from 'react-icons/md';
-import { useLoaderData } from 'react-router-dom';
-import { Documents, Signer } from 'types/documents';
+import { MdAdd, MdCancel, MdCheckCircle } from 'react-icons/md';
+import { ActionFunction, useFetcher, useLoaderData } from 'react-router-dom';
+import { CreateDocumentPayload, Documents, Signer } from 'types/documents';
 import getSingnersString from 'utils/getSingnersString';
 
-export const loader = () => {
-  return apiRequest('/documents');
+export const loader = getDocuments;
+
+export const action: ActionFunction = async ({ request }) => {
+  const formData = await request.formData();
+  const newDocument = Object.fromEntries(formData);
+  return createDocumentFormData(newDocument as CreateDocumentPayload);
 };
 
 export default function Index() {
   const documents = useLoaderData() as Documents;
+  const fetcher = useFetcher();
 
   const [openedWidgetData, setOpenedWidgetData] = useState<WidgetData | undefined>();
 
@@ -26,6 +32,16 @@ export default function Index() {
       widgetId: signer.widget_id as string,
       fileB64,
     });
+  }
+
+  function handleCreateDocument() {
+    const payload = new FormData();
+    payload.append('title', 'My cool document from react');
+    payload.append('content', loremLongText);
+    payload.append('callback_url', 'https://xddd/on-document-signed');
+    payload.append('signatories[0].[name]', 'Giovanny González Baltazar');
+    payload.append('signatories[0].[email]', 'giovanny.gonzalez.19@gmail.com');
+    fetcher.submit(payload, { method: 'post' });
   }
 
   return (
@@ -41,7 +57,11 @@ export default function Index() {
               <th>
                 <Center>Signed</Center>
               </th>
-              <th />
+              <th>
+                <Button onClick={handleCreateDocument} leftIcon={<MdAdd size={18} />} color="cyan">
+                  Create new
+                </Button>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -55,7 +75,7 @@ export default function Index() {
                     {signed ? (
                       <MdCheckCircle color="green" size={20} />
                     ) : (
-                      <MdCancel color="red" size={20} />
+                      <MdCancel color="gray" size={20} />
                     )}
                   </Center>
                 </td>

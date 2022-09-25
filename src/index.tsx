@@ -5,7 +5,7 @@ import ErrorPage from 'components/ErrorPage';
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Index, { loader as IndexLoader } from 'routes';
+import Index, { action as IndexAction, loader as IndexLoader } from 'routes';
 import { theme } from 'styles/theme';
 
 import reportWebVitals from './reportWebVitals';
@@ -16,6 +16,7 @@ const router = createBrowserRouter([
     element: <Index />,
     errorElement: <ErrorPage />,
     loader: IndexLoader,
+    action: IndexAction,
   },
 ]);
 
