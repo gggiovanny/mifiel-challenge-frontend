@@ -1,13 +1,15 @@
-import { Button, Center, Container, Table, Title } from '@mantine/core';
+import { Button, Container, Group, List, Table, Title } from '@mantine/core';
 import SignButton from 'components/SignButton';
 import SignDocumentModal, { WidgetData } from 'components/SignDocumentModal';
+import SignedStatusIcon from 'components/SignedStatusIcon';
 import { loremLongText } from 'constants/defaults';
 import { createDocumentFormData, getDocuments } from 'providers/api/documents';
 import { useState } from 'react';
-import { MdAdd, MdCancel, MdCheckCircle } from 'react-icons/md';
+import { MdAdd } from 'react-icons/md';
 import { ActionFunction, useFetcher, useLoaderData } from 'react-router-dom';
 import { CreateDocumentPayload, Documents, Signer } from 'types/documents';
-import getSingnersString from 'utils/getSingnersString';
+
+const { Item } = List;
 
 export const loader = getDocuments;
 
@@ -20,8 +22,9 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Index() {
   const documents = useLoaderData() as Documents;
   const fetcher = useFetcher();
-
   const [openedWidgetData, setOpenedWidgetData] = useState<WidgetData | undefined>();
+
+  const isCreatingDocument = fetcher.state !== 'idle';
 
   function handleCloseSignModal() {
     setOpenedWidgetData(undefined);
@@ -54,11 +57,14 @@ export default function Index() {
               <th>Name</th>
               <th>Participants</th>
               <th>Created at</th>
+
               <th>
-                <Center>Signed</Center>
-              </th>
-              <th>
-                <Button onClick={handleCreateDocument} leftIcon={<MdAdd size={18} />} color="cyan">
+                <Button
+                  onClick={handleCreateDocument}
+                  leftIcon={<MdAdd size={18} />}
+                  color="cyan"
+                  loading={isCreatingDocument}
+                >
                   Create new
                 </Button>
               </th>
@@ -67,18 +73,22 @@ export default function Index() {
           <tbody>
             {documents.map(({ id, file_file_name, created_at, signers, signed, file_b64 }) => (
               <tr key={id}>
-                <td>{file_file_name}</td>
-                <td>{getSingnersString(signers)}</td>
-                <td>{created_at}</td>
                 <td>
-                  <Center>
-                    {signed ? (
-                      <MdCheckCircle color="green" size={20} />
-                    ) : (
-                      <MdCancel color="gray" size={20} />
-                    )}
-                  </Center>
+                  <Group position="left" noWrap>
+                    <SignedStatusIcon signed={signed} size={14} />
+                    {file_file_name}
+                  </Group>
                 </td>
+                <td>
+                  <List center>
+                    {(signers ?? []).map(({ name, signed }) => (
+                      <Item icon={<SignedStatusIcon signed={signed} size={14} signerName={name} />}>
+                        {name}
+                      </Item>
+                    ))}
+                  </List>
+                </td>
+                <td>{created_at}</td>
                 <td>
                   <SignButton signers={signers} fileB64={file_b64} onSignClick={handleSignClick} />
                 </td>

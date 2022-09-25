@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
     "@mantine/core": "^5.4.0",
     "@mantine/hooks": "^5.4.0",
     "@mifiel/models": "^0.1.0",
