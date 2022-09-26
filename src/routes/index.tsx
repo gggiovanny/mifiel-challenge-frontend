@@ -1,12 +1,13 @@
-import { Button, Container, Group, List, Table, Title } from '@mantine/core';
+import { Button, Center, Container, Group, List, Table, Text, Title } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import CreateDocumentModal from 'components/CreateDocumentModal';
 import SignButton from 'components/SignButton';
 import SignDocumentModal, { WidgetData } from 'components/SignDocumentModal';
 import SignedStatusIcon from 'components/SignedStatusIcon';
-import { loremLongText } from 'constants/defaults';
 import { createDocumentFormData, getDocuments } from 'providers/api/documents';
 import { useState } from 'react';
 import { MdAdd } from 'react-icons/md';
-import { ActionFunction, useFetcher, useLoaderData } from 'react-router-dom';
+import { ActionFunction, useLoaderData } from 'react-router-dom';
 import { CreateDocumentPayload, Documents, Signer } from 'types/documents';
 
 const { Item } = List;
@@ -21,10 +22,9 @@ export const action: ActionFunction = async ({ request }) => {
 
 export default function Index() {
   const documents = useLoaderData() as Documents;
-  const fetcher = useFetcher();
   const [openedWidgetData, setOpenedWidgetData] = useState<WidgetData | undefined>();
-
-  const isCreatingDocument = fetcher.state !== 'idle';
+  const [isOpenCreationModal, { open: openCreationModal, close: closeCreationModal }] =
+    useDisclosure(false);
 
   function handleCloseSignModal() {
     setOpenedWidgetData(undefined);
@@ -38,13 +38,7 @@ export default function Index() {
   }
 
   function handleCreateDocument() {
-    const payload = new FormData();
-    payload.append('title', 'My cool document from react');
-    payload.append('content', loremLongText);
-    payload.append('callback_url', 'https://xddd/on-document-signed');
-    payload.append('signatories[0].[name]', 'Giovanny González Baltazar');
-    payload.append('signatories[0].[email]', 'giovanny.gonzalez.19@gmail.com');
-    fetcher.submit(payload, { method: 'post' });
+    openCreationModal();
   }
 
   return (
@@ -59,12 +53,7 @@ export default function Index() {
               <th>Created at</th>
 
               <th>
-                <Button
-                  onClick={handleCreateDocument}
-                  leftIcon={<MdAdd size={18} />}
-                  color="cyan"
-                  loading={isCreatingDocument}
-                >
+                <Button onClick={handleCreateDocument} leftIcon={<MdAdd size={18} />} color="cyan">
                   Create new
                 </Button>
               </th>
@@ -81,8 +70,11 @@ export default function Index() {
                 </td>
                 <td>
                   <List center>
-                    {(signers ?? []).map(({ name, signed }) => (
-                      <Item icon={<SignedStatusIcon signed={signed} size={14} signerName={name} />}>
+                    {(signers ?? []).map(({ name, signed, id }) => (
+                      <Item
+                        key={id}
+                        icon={<SignedStatusIcon signed={signed} size={14} signerName={name} />}
+                      >
                         {name}
                       </Item>
                     ))}
@@ -96,11 +88,18 @@ export default function Index() {
             ))}
           </tbody>
         </Table>
+        {!documents.length && (
+          <Center>
+            <Text>
+              There are no documents yet. You can create a new one with the Create New button
+            </Text>
+          </Center>
+        )}
       </Container>
-
       {!!openedWidgetData && (
         <SignDocumentModal widgetData={openedWidgetData} onClose={handleCloseSignModal} />
       )}
+      <CreateDocumentModal isOpen={isOpenCreationModal} onClose={closeCreationModal} />
     </>
   );
 }
