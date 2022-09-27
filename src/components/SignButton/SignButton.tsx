@@ -16,7 +16,7 @@ export default function SignButton({ signers = [], fileB64, onSignClick }: Props
   };
 
   return (
-    <Menu>
+    <Menu withArrow>
       <Target>
         <Button>Sign</Button>
       </Target>
