@@ -1,4 +1,5 @@
 import { Button, Group, Modal, Stack, Textarea, TextInput, Title } from '@mantine/core';
+import { API_PUBLIC_BASE_URL } from 'constants/apiUrls';
 import { loremLongText } from 'constants/defaults';
 import useIsMobile from 'hooks/useIsMobile';
 import { useState } from 'react';
@@ -93,7 +94,7 @@ export default function CreateDocumentModal({ isOpen, onClose }: Props) {
             name="callback_url"
             label="Callback URL"
             placeholder="https://your-domain.net/on-document-signed"
-            defaultValue="https://9a35-187-188-175-201.ngrok.io/on-document-signed"
+            defaultValue={`${API_PUBLIC_BASE_URL}/on-document-signed`}
           />
 
           <Button type="submit">Create document</Button>

@@ -7,7 +7,7 @@ import SignDocumentModal, { WidgetData } from 'components/SignDocumentModal';
 import SignedStatusIcon from 'components/SignedStatusIcon';
 import { createDocumentFormData, getDocuments } from 'providers/api/documents';
 import { useState } from 'react';
-import { MdAdd } from 'react-icons/md';
+import { MdAdd, MdCloud } from 'react-icons/md';
 import { ActionFunction, useLoaderData } from 'react-router-dom';
 import { CreateDocumentPayload, Documents, Signer } from 'types/documents';
 
@@ -68,6 +68,7 @@ export default function Index() {
                     <Group position="left" noWrap>
                       <SignedStatusIcon signed={signed} size={14} />
                       {file_file_name}
+                      {!localDocumentId && <MdCloud color="gray" size={14} />}
                     </Group>
                   </td>
                   <td>
