@@ -31,6 +31,12 @@ export default function SignDocumentModal({ widgetData, onClose }: Props) {
     isOnSandbox: true,
     onWidgetOpen: handleOpenWidget,
     fileB64,
+    successButtonText: 'Proceed to next step',
+    onSuccess: () => {
+      // eslint-disable-next-line no-console
+      console.log('file: SignDocumentModal.tsx ~ line 36 ~ onSuccess');
+    },
+    onError: onClose,
   });
 
   return (

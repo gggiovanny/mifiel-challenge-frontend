@@ -24,17 +24,21 @@ export default function ({
 }: Props) {
   const openWidget = useCallback(() => {
     if (window.mifiel) {
-      window.mifiel.widget({
+      const config = {
         widgetId,
         appendTo: containerId,
         successBtnText: successButtonText,
         onSuccess: { callToAction: onSuccess },
         onError: { callToAction: onError },
-        // TODO: pass fileB64
-      });
+        pdf: fileB64,
+      };
+
+      // eslint-disable-next-line no-console
+      console.log('file: useMifielWidget.ts ~ line 27 ~ config', config);
+      window.mifiel.widget(config);
     }
     onWidgetOpen && onWidgetOpen();
-  }, [containerId, onError, onSuccess, onWidgetOpen, successButtonText, widgetId]);
+  }, [containerId, fileB64, onError, onSuccess, onWidgetOpen, successButtonText, widgetId]);
 
   const { start, clear } = useTimeout(openWidget, 100);
 

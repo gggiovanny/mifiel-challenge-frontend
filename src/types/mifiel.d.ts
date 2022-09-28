@@ -8,6 +8,7 @@ type WidgetConfig = {
   onError: {
     callToAction?: VoidFunction | string;
   };
+  pdf?: string;
 };
 
 declare var mifiel:
